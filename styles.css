@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #000000;
     margin: 0;
     padding: 0;
 }
@@ -15,6 +15,9 @@ header {
     text-align: center;
     margin-bottom: 20px;
 }
+header h1{
+    color: #ffed79;
+}
 
 input[type="text"] {
     padding: 10px;
@@ -26,15 +29,18 @@ input[type="text"] {
 button {
     padding: 10px 20px;
     border: none;
-    background-color: #28a745;
-    color: #fff;
+    background-color: #ffde05;
+    color: #000000fe;
     border-radius: 5px;
     cursor: pointer;
     margin-left: 10px;
+    
 }
 
+
+
 button:hover {
-    background-color: #218838;
+    background-color: #c2d534;
 }
 
 main {
@@ -53,11 +59,22 @@ section {
 
 .hidden {
     display: none;
+    
+    
+
+    
+    
+    
 }
 
 #movies li,
 #favorites-list li {
     margin-bottom: 10px;
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+    
+}
+#movies span{
+    margin-left: 10px;
 }
 
 #movies img {
@@ -72,7 +89,14 @@ section {
 }
 
 #details img {
-    max-width: 200px;
+    max-width: 70px;
     border-radius: 5px;
 }
- 
+
+#cerrar{
+    background-color: rgba(255, 0, 0, 0.564);
+    
+}
+#cerrar:hover{
+    background-color: rgb(255, 0, 0);
+}

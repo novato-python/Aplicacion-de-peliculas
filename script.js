@@ -1,6 +1,6 @@
 
-const apiToken ='eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlOTQ5YjU5ZDUwN2Y4YzZhZGQ4NjYyMDRlODYzOWY0ZCIsIm5iZiI6MTcyODU5MTU0MC4zNzkyOTcsInN1YiI6IjY3MDgyNWVjZTQ2YTEyYTE5NDFhNTlhMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dTsGedcAwfmByz5oG1KRzHWa8K2EHj78zN_fSYQ2KlY'
-const apiKey = 'e949b59d507f8c6add866204e8639f4d'
+
+const apiKey = 'e531ffc5c1cf409cdf67cd69dcb812e3'
 const apiUrl = 'https://api.themoviedb.org/3';
 const movieList = document.getElementById('movies');
 const movieDetails = document.getElementById('movie-details');
@@ -11,15 +11,16 @@ const favoritesList = document.getElementById('favorites-list');
 const addToFavoritesButton = document.getElementById('add-to-favorites');
 let selectedMovieId = null;
 let favoriteMovies = JSON.parse(localStorage.getItem('favorites')) || [];
+const closeButton = document.getElementById('cerrar')
 
 // Fetch and display popular movies
 async function fetchPopularMovies() {
     try {
         // tu codigo aqui: realiza una solicitud para obtener las películas populares
-        const response= await fetch(apiUrl);
+        const response= await fetch(`${apiUrl}/movie/popular?api_key=${apiKey}&language=es-MX&pag`);
         if (!response.ok){throw new Error('Error en la solicitud')}
         const movies = await response.json();
-        displayMovies(movies);
+        displayMovies(movies.results);
         console.log(movies);
 
         // y llama a displayMovies con los resultados
@@ -36,7 +37,7 @@ function displayMovies(movies) {
         const li = document.createElement('li');
         li.innerHTML = `
             <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
-            <span>${movie.title}</span>
+            <span style= "font-size: 18px">${movie.title}</span>
         `;
         li.onclick = () => showMovieDetails(movie.id); // Muestra detalles al hacer clic en la película
         movieList.appendChild(li);
@@ -48,6 +49,18 @@ async function showMovieDetails(movieId) {
     try {
         // tu codigo aqui: realiza una solicitud para obtener los detalles de la película
         // y actualiza el contenedor de detalles con la información de la película
+        const response= await fetch(`${apiUrl}/movie/${movieId}?api_key=${apiKey}&language=es-MX`);
+        if(!response.ok){throw new Error('Error en la solicitud');};
+        const movieD = await response.json();
+       movieDetails.hidden = false;
+       movieDetails.removeAttribute('hidden');
+       movieDetails.style.display = 'block';
+        detailsContainer.innerHTML=`
+        <h3>${movieD.title}</h3>
+        <img src="https://image.tmdb.org/t/p/w500${movieD.poster_path}" alt="${movieD.title}">
+        <p>${movieD.overview}</p>
+        <p><strong>Fecha de lanzamiento</strong>: ${movieD.release_date}`;
+        selectedMovieId = movieId
     } catch (error) {
         console.error('Error fetching movie details:', error);
     }
@@ -60,7 +73,12 @@ searchButton.addEventListener('click', async () => {
         try {
             // tu codigo aqui: realiza una solicitud para buscar películas
             // y llama a displayMovies con los resultados de la búsqueda
-        } catch (error) {
+            const response = await fetch(`${apiUrl}/search/movie?&query=${encodeURIComponent(query)}&api_key=${apiKey}&language=es-MX`);
+            if(!response.ok){throw new Error('Error en la solicitud');}
+            const searchResult = await response.json();
+            displayMovies(searchResult.results);
+            }
+         catch (error) {
             console.error('Error searching movies:', error);
         }
     }
@@ -75,7 +93,14 @@ addToFavoritesButton.addEventListener('click', () => {
         };
         if (!favoriteMovies.some(movie => movie.id === selectedMovieId)) {
             favoriteMovies.push(favoriteMovie);
+            const li = document.createElement('li');
+        
             localStorage.setItem('favorites', JSON.stringify(favoriteMovies)); // Guarda en localStorage
+            li.innerHTML = `
+            JSON.stringify(favoriteMovies)
+
+            
+        `;
             displayFavorites(); // Muestra la lista actualizada de favoritos
         }
     }
@@ -90,6 +115,13 @@ function displayFavorites() {
         favoritesList.appendChild(li);
     });
 }
+
+closeButton.addEventListener('click', () => {
+    movieDetails.style.display='none';
+
+
+}
+)
 
 // Initial fetch of popular movies and display favorites
 fetchPopularMovies(); // Obtiene y muestra las películas populares
